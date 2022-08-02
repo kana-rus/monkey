@@ -1,12 +1,25 @@
-mod lexer; use lexer::{Lexer};
+mod lexer; use lexer::toknize;
 
 
 fn main() {
-    println!("{:?}", Lexer::toknize(String::from("
-        let x = fn(a, b);
-        let y = fna + 5;
-    ")));
-    println!("{:?}", Lexer::toknize(String::from("
-        letx=fn(adcadv,let);lety=fn5 fna;
+    println!("{:?}", toknize(String::from("
+let five = 5;
+let ten = 10;
+let add = fn(x, y) {
+    x + y;
+};
+
+let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
+
+if (5 < 10) {
+    return true;
+} else {
+    return false;
+}
+
+10 == 10;
+10 != 9;
     ")));
 }
