@@ -73,7 +73,20 @@ pub enum Token {
             Token::Return => Token::Return,
         }
     }
+    fn from_keyword(keyword: &str) -> Token {
+        match keyword {
+            "fn" => Token::Functon,
+            "let" => Token::Let,
+            "true" => Token::True,
+            "false" => Token::False,
+            "else" => Token::Else,
+            "return" => Token::Return,
+            _ => unreachable!(),
+        }
+    }
 }
+
+
 
 
 pub fn toknize(input: String) -> VecDeque<Token> {
@@ -116,123 +129,16 @@ fn next_token(next: Option<char>, input: &mut Chars) -> (Token, Option<char>) {
                     other => (Token::Bang, other),
                 },
                 'f' => match input.next() {
-                    Some('a') => match input.next() {
-                        Some('l') => match input.next() {
-                            Some('s') => match input.next() {
-                                Some('e') => match input.next() {
-                                    Some(' ' | '\n') => (Token::False, input.next()),
-                                    None => (Token::False, None),
-                                    Some(ch) => {
-                                        let (word, next) = read_a_word_with("false".to_owned(), Some(ch), input);
-                                            if &word=="false" { (Token::False, next) }
-                                            else              { (Token::Ident(word), next) }
-                                    }
-                                },
-                                None => (Token::Ident("fals".to_owned()), input.next()),
-                                some => read_a_token_from("fals".to_owned(), some, input)
-                            },
-                            None => (Token::Ident("fal".to_owned()), None),
-                            some => read_a_token_from("fal".to_owned(), some, input)
-                        },
-                        None => (Token::Ident("fa".to_owned()), None),
-                        some => (read_a_token_from("fa".to_owned(), some, input))
-                    },
-                    Some('n') => match input.next() {
-                        Some(' ' | '\n') => (Token::Functon, input.next()),
-                        None => (Token::Functon, None),
-                        Some(ch) => {
-                            let (word, next) = read_a_word_with("fn".to_owned(), Some(ch), input);
-                            if &word == "fn" { (Token::Functon, next) }
-                            else             { (Token::Ident(word), next) }
-                        }
-                    },
+                    Some('a') => expect("false", "fa".to_owned(), input.next(), input),
+                    Some('n') => expect("fn", "fn".to_owned(), input.next(), input),
                     None => (Token::Ident('f'.to_string()), None),
-                    some => read_a_token_from("f".to_owned(), some, input),
+                    some => read_a_keyword_from("f".to_owned(), some, input),
                 },
-                'l' => match input.next() {
-                    Some('e') => match input.next() {
-                        Some('t') => match input.next() {
-                            Some(' ' | '\n') => (Token::Let, input.next()),
-                            None => (Token::Let, None),
-                            Some(ch) => {
-                                let (word, next) = read_a_word_with("let".to_string(), Some(ch), input);
-                                if &word == "let" { (Token::Let, next) }
-                                else              { (Token::Ident(word), next) }
-                            },
-                        },
-                        None => (Token::Ident("le".to_owned()), None),
-                        some => read_a_token_from("le".to_owned(), some, input),
-                    },
-                    None => (Token::Ident("le".to_owned()), None),
-                    some => read_a_token_from("l".to_owned(), some, input)
-                },
-                't' => match input.next() {
-                    Some('r') => match input.next() {
-                        Some('u') => match input.next() {
-                            Some('e') => match input.next() {
-                                Some(' ' | '\n') => (Token::True, input.next()),
-                                None => (Token::True, None),
-                                some => {
-                                    let (word, next) = read_a_word_with("true".to_owned(), some, input);
-                                    if &word == "true" { (Token::True, next) }
-                                    else               { (Token::Ident(word), next) }
-                                },
-                            },
-                            None => (Token::True, None),
-                            some => read_a_token_from("tre".to_owned(), some, input),
-                        },
-                        None => (Token::Ident("tr".to_owned()), None),
-                        some => read_a_token_from("tr".to_owned(), some, input),
-                    },
-                    None => (Token::Ident("t".to_owned()), None),
-                    some => read_a_token_from("t".to_owned(), some, input),
-                },
-                'e' => match input.next() {
-                    Some('l') => match input.next() {
-                        Some('s') => match input.next() {
-                            Some('e') => (Token::Else, input.next()),
-                            None      => (Token::Else, None),
-                            some => {
-                                let (word, next) = read_a_word_with("else".to_owned(), some, input);
-                                if &word == "els" { (Token::Else, next) }
-                                else               { (Token::Ident(word), next) }
-                            }
-                        },
-                        None => (Token::Ident("el".to_owned()), None),
-                        some => read_a_token_from("el".to_owned(), some, input),
-                    },
-                    None => (Token::Ident("e".to_owned()), None),
-                    some => read_a_token_from("e".to_owned(), some, input)
-                },
-                'r' => match input.next() {
-                    Some('e') => match input.next() {
-                        Some('t') => match input.next() {
-                            Some('u') => match input.next() {
-                                Some('r') => match input.next() {
-                                    Some('n') => match input.next() {
-                                        Some(' ' | '\n') => (Token::Return, input.next()),
-                                        None => (Token::Return, None),
-                                        some => {
-                                            let (word, next) = read_a_word_with("return".to_owned(), some, input);
-                                            if &word == "return" { (Token::Return, next) }
-                                            else                 { (Token::Ident(word), next) }
-                                        }
-                                    },
-                                    None => (Token::Ident("retur".to_owned()), None),
-                                    some => read_a_token_from("retur".to_owned(), some, input),
-                                }
-                                None => (Token::Ident("retu".to_owned()), None),
-                                some => read_a_token_from("retu".to_owned(), some, input),
-                            },
-                            None => (Token::Ident("ret".to_owned()), None),
-                            some => read_a_token_from("ret".to_owned(), some, input),
-                        },
-                        None => (Token::Ident("re".to_owned()), None),
-                        some => read_a_token_from("re".to_owned(), some, input),
-                    },
-                    None => (Token::Ident("r".to_owned()), None),
-                    some => read_a_token_from("r".to_owned(), some, input),
-                }
+                'l' => expect("let", 'l'.to_string(), input.next(), input),
+                't' => expect("true", 't'.to_string(), input.next(), input),
+                'e' => expect("else", 'e'.to_string(), input.next(), input),
+                'r' => expect("return", 'r'.to_string(), input.next(), input),
+                ch @ ('a'..='z'|'A'..='Z'|'_') => read_a_keyword_from(ch.to_string(), input.next(), input),
                 digit @ '0'..='9' => {
                     let mut digits = vec![digit.to_digit(10).unwrap() as usize];
                     let mut next = input.next();
@@ -246,10 +152,6 @@ fn next_token(next: Option<char>, input: &mut Chars) -> (Token, Option<char>) {
                     }
                     (Token::Int(digits.iter().fold(0, |a,b| 10 * a + b)), next)
                 },
-                ch @ ('a'..='z'|'A'..='Z'|'_') => {
-                    let (word, next) = read_a_word_with(ch.to_string(), input.next(), input);
-                    (Token::Ident(word), next)
-                },
                 ' ' | '\n' => next_token(input.next(), input),
                 _ => (Token::Illegal, input.next())
             }
@@ -257,27 +159,46 @@ fn next_token(next: Option<char>, input: &mut Chars) -> (Token, Option<char>) {
     }
 }
 
-fn read_a_word_with(mut init: String, mut next: Option<char>, input: &mut Chars) -> (String, Option<char>) {
+
+
+
+fn read_a_keyword_from(init: String, mut next: Option<char>, input: &mut Chars) -> (Token, Option<char>) {
+    let mut word = init;
     while let Some(n) = next {
         match n {
             c @ ('a'..='z'|'A'..='Z'|'0'..='9'|'_') => {
-                init.push(c);
+                word.push(c);
                 next = input.next();
             },
             _ => break,
         }
     }
-    (init, next)
+    match word.as_str() {
+        keyword @ ("fn"|"let"|"true"|"false"|"else"|"return") => (Token::from_keyword(keyword), next),
+        _ => (Token::Ident(word), next)
+    }
 }
-fn read_a_token_from(mut init: String, mut next: Option<char>, input: &mut Chars) -> (Token, Option<char>) {
-    while let Some(n) = next {
-        match n {
-            c @ ('a'..='z'|'A'..='Z'|'0'..='9'|'_') => {
-                init.push(c);
-                next = input.next();
+
+fn expect(
+    keyword: &str, mut current: String, next: Option<char>, input: &mut Chars
+) -> (Token, Option<char>) {
+    let (current_len, keyword_len) = (current.len(), keyword.len());
+
+    if current_len > keyword_len { panic!("current is longer than goal!"); }
+
+    if current_len == keyword_len {
+        read_a_keyword_from(keyword.to_owned(), next, input)
+    } else {
+        let expected_char = keyword.chars().nth(current_len + 1).unwrap();
+        match next {
+            None => (Token::Ident(current.clone()), None),
+            Some(ch) if ch == expected_char => {
+                current.push(expected_char);
+                expect(keyword, current, input.next(), input)
             },
-            _ => break,
+            some => {
+                read_a_keyword_from(current.clone(), some, input)
+            },
         }
     }
-    (Token::Ident(init), next)
 }
