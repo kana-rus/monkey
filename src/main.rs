@@ -1,9 +1,11 @@
+#![allow(unused)]
+
 mod lexer; use lexer::toknize;
-mod parser; use parser::{};
+mod parser; use parser::Parser;
 
 
 fn main() {
-    println!("{:?}", toknize(String::from("
+    let tokens = toknize(String::from(/*"
 let five = 5;
 let ten = 10;
 let add = fn(x, y) {
@@ -11,7 +13,7 @@ let add = fn(x, y) {
 };
 
 let result = add(five, ten);
-!-/*5;
+!-/5;
 5 < 10 > 5;
 
 if (5 < 10) {
@@ -22,5 +24,10 @@ if (5 < 10) {
 
 10 == 10;
 10 != 9;
-    ")));
+    "*/"
+let five = 1 + 2* 2;
+    "));
+
+    let parser = Parser::new(tokens);
+    println!("{:?}", parser.parse());
 }

@@ -1,21 +1,29 @@
 use super::{
-    Tokens,
-    expression::{Expression}
+    Parser,
+    expression::{Expression, ParseExpression}
 };
 
-
+#[derive(Debug)]
 pub enum Statemant {
-    Let(LetStatement),
+    Let(Identifier),
 }
 
-
-type LetStatement = Identifier;
-struct Identifier {
+#[derive(Debug)]
+pub struct Identifier {
     name: String,
     value: Expression,
 }
 
 
 pub trait ParseStatemant {
-    fn statement(&mut self) -> Statemant;
+    fn let_statement(&mut self) -> Statemant;
+} impl ParseStatemant for Parser {
+    fn let_statement(&mut self) -> Statemant {
+        self.consume_let();
+        let name = self.expect_ident();
+        self.consume_assign();
+        let value = self.expression();
+        self.consume_semicolon();
+        Statemant::Let(Identifier{name, value})
+    }
 }
