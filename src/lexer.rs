@@ -5,6 +5,21 @@ use std::{
 
 
 #[derive(Debug)]
+pub struct Tokens(std::collections::VecDeque<Token>);
+impl Tokens {
+    pub fn new() -> Tokens {
+        Tokens(std::collections::VecDeque::<Token>::new())
+    }
+    pub fn push(&mut self, token: Token) {
+        self.0.push_back(token);
+    }
+    pub fn pop(&mut self) -> Option<Token> {
+        self.0.pop_front()
+    }
+}
+
+
+#[derive(Debug)]
 pub enum Token {
     Illegal,
     EOF,
@@ -42,7 +57,7 @@ pub enum Token {
     Else,
     Return,
 } impl Token {
-    fn copy(&self) -> Self {
+    pub fn copy(&self) -> Self {
         match self {
             Token::Ident(string) => Token::Ident(string.clone()),
             Token::Int(n) => Token::Int(*n),
@@ -84,19 +99,25 @@ pub enum Token {
             _ => unreachable!(),
         }
     }
+    pub fn is_eof(&self) -> bool {
+        match self {
+            Token::EOF => true,
+            _ => false,
+        }
+    }
 }
 
 
 
 
-pub fn toknize(input: String) -> VecDeque<Token> {
+pub fn toknize(input: String) -> Tokens {
     let mut input = input.chars();
-    let mut tokens = VecDeque::new();
+    let mut tokens = Tokens::new();
     let (mut token, mut next) = next_token(input.next(), &mut input);
     loop { match token {
-        Token::EOF => break,
+        Token::EOF => { tokens.push(Token::EOF); break; },
         ref other => {
-            tokens.push_back(other.copy());
+            tokens.push(other.copy());
             (token, next) = next_token(next, &mut input);
         }
     } }

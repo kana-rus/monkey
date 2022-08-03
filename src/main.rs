@@ -1,4 +1,5 @@
 mod lexer; use lexer::toknize;
+mod parser; use parser::{};
 
 
 fn main() {
